@@ -1,4 +1,4 @@
-# This code reads in ad prepares all variables used for reproduction of the Jiang et al. (2023) paper. It reads in:
+# This code reads in and prepares all variables used for reproduction of the Jiang et al. (2023) paper. It reads in:
 # participant_opt_out.csv: contains ids of those participants that have opted out of providing data to UKB - these must be removed
 # jiang_data.csv: contains field IDs 21022, 31, 53, 21000, 6138, 845, 22189, 738, 20116, 1239, 1249, 1558, 22032, 884, 
   # 21001, 20002, 2443, 6177, 6153, 6150, 709, 1031, 6160, 2050, 2020, 3393, 2247, 42018, 42020, 42022, 130836, 131036,
