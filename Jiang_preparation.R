@@ -18,13 +18,11 @@
 library(tidyverse)
 
 
-setwd('D:/Job')
-
 # remove those participants that opted out of the study
-opt_outs <- read.csv('Raw data/participant_opt_out.csv')
+opt_outs <- read.csv('participant_opt_out.csv')
 
 # read in the dataset
-hear <- read.csv('Raw data/jiang_data.csv') %>%
+hear <- read.csv('jiang_data.csv') %>%
   rename(id = eid) %>%
   filter(!id %in% opt_outs$X1005679)
 
@@ -40,7 +38,7 @@ hear <- select(hear, -starts_with(c('X1239', 'X1249')))
 
 
 ## Socioeconomic deprivation
-deprivation <- read.csv('Raw data/deprivation.csv')
+deprivation <- read.csv('deprivation.csv')
 hear <- merge(hear, deprivation, by = 'id', all.x = TRUE)
 
 
@@ -238,7 +236,7 @@ dementia_diagnoses$diagnosis[dementia_diagnoses$code %in% c('F02', 'F03', 'G310'
 dementia_diagnoses$n <- 0
 
 # import death data
-death <- read.csv('Raw data/death_causes.csv')
+death <- read.csv('death_causes.csv')
 # remove empty rows
 death[death == ''] <- NA
 death <- death %>%
@@ -269,7 +267,7 @@ death <- as.data.frame(death) %>%
   rename(id = eid) %>%
   distinct(id, .keep_all = TRUE)
 # add dates
-death_dates <- read.csv('Raw data/death_date.csv') %>%
+death_dates <- read.csv('death_date.csv') %>%
   rename(id = eid, date = X40000.0.0) %>%
   filter(date != '')
 death_dates$date <- as.Date(death_dates$date, format = '%d/%m/%Y')
@@ -277,7 +275,7 @@ death <- merge(death, death_dates, by = 'id', all.x = TRUE)
 
 
 # repeat similar procedure with hospital data
-inpatient <- readRDS('Raw data/inpatient_diagnoses.rds')
+inpatient <- readRDS('inpatient_diagnoses.rds')
 colnames(inpatient)[colnames(inpatient) == 'diagnosis'] <- 'code'
 inpatient <- inpatient[grepl(paste(as.vector(dementia_diagnoses$code), collapse="|"), inpatient$code), ]
 inpatient$date <- as.Date(inpatient$date, format = '%Y-%m-%d')
@@ -333,7 +331,7 @@ hear <- hear %>%
 
 
 # add death dates
-death_dates <- read.csv('Raw data/death_date.csv') %>%
+death_dates <- read.csv('death_date.csv') %>%
   rename(id = eid, death_date = X40000.0.0)
 death_dates[death_dates == ''] <- NA
 death_dates$death_date <- as.Date(death_dates$death_date, format = '%d/%m/%Y')
@@ -395,7 +393,7 @@ hear$ass_date <- as.Date(hear$ass_date, format = '%Y-%m-%d')
 
 # get latest source of hospital diagnosis
 library(data.table)
-diagnoses_dates <- read.csv('Raw data/hesin.txt', sep="\t")
+diagnoses_dates <- read.csv('hesin.txt', sep="\t")
 diagnoses_dates$epistart <- as.Date(diagnoses_dates$epistart, format = '%d-%m-%Y')
 diagnoses_dates_dt <- as.data.table(diagnoses_dates)
 latest_dates <- as.data.frame(diagnoses_dates_dt[, .(epiend = max(epiend, na.rm = TRUE)), by = eid])
@@ -405,7 +403,7 @@ latest_dates <- merge(latest_dates, subset(diagnoses_dates, select = c(eid, epie
   select(id, dsource) %>%
   distinct(id, .keep_all = TRUE)
 # for those with no data, supplement with primary care (1= England(Vision), 2= Scotland, 3 = England (TPP), 4 = Wales)
-gp_diagnoses <- read.csv('Raw data/gp_clinical.txt', sep="\t", header=TRUE, quote="") %>%
+gp_diagnoses <- read.csv('gp_clinical.txt', sep="\t", header=TRUE, quote="") %>%
   select(eid, data_provider, event_dt) %>%
   mutate(across(event_dt, ~as.Date(., format = "%d/%m/%Y")))
 gp_diagnoses_dt <- as.data.table(gp_diagnoses)
@@ -444,7 +442,7 @@ hear <- merge(hear, latest_dates, by='id', all.x = TRUE)
 
 
 # include APOE
-apoe <- read.csv('Raw data/apoe.csv')
+apoe <- read.csv('apoe.csv')
 colnames(apoe) <- c('id', 'rs429358', 'rs7412')
 
 apoe$apoe <- NA
